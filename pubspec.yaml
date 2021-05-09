@@ -58,6 +58,9 @@ dependencies:
   #https://pub.dev/packages/fluttertoast/install
   fluttertoast: ^8.0.6
 
+  #https://pub.dev/packages/carousel_slider/install
+  carousel_slider: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

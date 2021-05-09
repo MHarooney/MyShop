@@ -49,13 +49,16 @@ class AppCubit extends Cubit<AppStates> {
 
   HomeModel homeModel;
 
-  void getHomeData(){
+  void getHomeData() {
     emit(AppLoadingHomeDataState());
 
-    DioHelper.getData(url: HOME).then((value) {
+    DioHelper.getData(
+      url: HOME,
+      token: token,
+    ).then((value) {
       homeModel = HomeModel.fromJson(value.data);
 
-      print(homeModel.data.banners[0].image);
+      printFullText(homeModel.data.banners[0].image);
       print(homeModel.status);
 
       emit(AppSuccessHomeDataState());
