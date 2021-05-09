@@ -7,7 +7,7 @@ import 'package:shop_app/modules/login/cubit/login_cubit.dart';
 import 'package:shop_app/modules/login/cubit/login_states.dart';
 import 'package:shop_app/modules/register/register_screen.dart';
 import 'package:shop_app/network/local/cache_helper.dart';
-import 'package:shop_app/shared/components.dart';
+import 'package:shop_app/shared/components/components.dart';
 
 class LoginScreen extends StatelessWidget {
   var formKey = GlobalKey<FormState>();

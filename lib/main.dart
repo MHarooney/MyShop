@@ -25,9 +25,11 @@ void main() async {
 
   String token = CacheHelper.getData(key: 'token');
 
-  if(onBoarding != null) {
-    if(token != null)  widget = HomeLayout();
-    else widget = LoginScreen();
+  if (onBoarding != null) {
+    if (token != null)
+      widget = HomeLayout();
+    else
+      widget = LoginScreen();
   } else {
     widget = OnBoardingScreen();
   }
@@ -40,6 +42,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final bool isDark;
+
   // final bool onBoarding;
   final Widget startWidget;
 
@@ -52,6 +55,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => AppCubit()
+        ..getHomeData()
         ..changeAppMode(
           fromShared: isDark,
         ),
