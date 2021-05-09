@@ -65,7 +65,7 @@ class ProductsScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 1.0,
                 crossAxisSpacing: 1.0,
-                childAspectRatio: 1 / 1.58,
+                childAspectRatio: 1 / 1.72,
                 children: List.generate(
                   model.data.products.length,
                   (index) => buildGridProduct(model.data.products[index]),
@@ -137,6 +137,15 @@ class ProductsScreen extends StatelessWidget {
                             decorationThickness: 2.0,
                           ),
                         ),
+                      Spacer(),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.favorite_border,
+                          size: 22.0,
+                        ),
+                      ),
                     ],
                   ),
                 ],
