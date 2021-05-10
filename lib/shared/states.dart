@@ -10,4 +10,8 @@ class AppSuccessHomeDataState extends AppStates {}
 
 class AppErrorHomeDataState extends AppStates {}
 
+class AppSuccessCategoriesDataState extends AppStates {}
+
+class AppErrorCategoriesDataState extends AppStates {}
+
 class AppChangeModeState extends AppStates {}
