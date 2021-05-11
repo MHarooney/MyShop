@@ -1,7 +1,10 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/categories_model.dart';
+import 'package:shop_app/models/change_favorites_model.dart';
+import 'package:shop_app/models/favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/modules/categories/categories_screen.dart';
 import 'package:shop_app/modules/favorites/favourites_screen.dart';
@@ -10,15 +13,14 @@ import 'package:shop_app/modules/settings/settings_screen.dart';
 import 'package:shop_app/network/end_points.dart';
 import 'package:shop_app/network/local/cache_helper.dart';
 import 'package:shop_app/network/remote/dio_helper.dart';
-import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/states.dart';
+
+import 'components/constants.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialStates());
 
   static AppCubit get(context) => BlocProvider.of(context);
-
-  bool isDark = false;
 
   int currentIndex = 0;
 
@@ -29,26 +31,14 @@ class AppCubit extends Cubit<AppStates> {
     SettingsScreen(),
   ];
 
-  void changeBottomIndex(int index) {
+  void changeBottom(int index) {
     currentIndex = index;
-    // if (index == 1) getSports();
-    // if (index == 2) getScience();
     emit(AppChangeBottomNavAppBarState());
   }
 
-  void changeAppMode({bool fromShared}) {
-    if (fromShared != null) {
-      isDark = fromShared;
-      emit(AppChangeModeState());
-    } else {
-      isDark = !isDark;
-      CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
-        emit(AppChangeModeState());
-      });
-    }
-  }
-
   HomeModel homeModel;
+
+  Map<int, bool> favorites = {};
 
   void getHomeData() {
     emit(AppLoadingHomeDataState());
@@ -59,8 +49,16 @@ class AppCubit extends Cubit<AppStates> {
     ).then((value) {
       homeModel = HomeModel.fromJson(value.data);
 
-      printFullText(homeModel.data.banners[0].image);
-      print(homeModel.status);
+      //print(homeModel.data.banners[0].image);
+      //print(homeModel.status);
+
+      homeModel.data.products.forEach((element) {
+        favorites.addAll({
+          element.id: element.inFavorites,
+        });
+      });
+
+      //print(favorites.toString());
 
       emit(AppSuccessHomeDataState());
     }).catchError((error) {
@@ -71,8 +69,7 @@ class AppCubit extends Cubit<AppStates> {
 
   CategoriesModel categoriesModel;
 
-  void getCategoriesData() {
-
+  void getCategories() {
     DioHelper.getData(
       url: GET_CATEGORIES,
     ).then((value) {
@@ -83,5 +80,117 @@ class AppCubit extends Cubit<AppStates> {
       print(error.toString());
       emit(AppErrorCategoriesDataState());
     });
+  }
+
+  ChangeFavoritesModel changeFavoritesModel;
+
+  void changeFavorites(int productId) {
+    favorites[productId] = !favorites[productId];
+
+    emit(AppChangeFavoritesState());
+
+    DioHelper.postData(
+      url: FAVORITES,
+      data: {
+        'product_id': productId,
+      },
+      token: token,
+    ).then((value) {
+      changeFavoritesModel = ChangeFavoritesModel.fromJson(value.data);
+      print(value.data);
+
+      if (!changeFavoritesModel.status) {
+        favorites[productId] = !favorites[productId];
+      } else {
+        getFavorites();
+      }
+
+      emit(AppSuccessChangeFavoritesState(changeFavoritesModel));
+    }).catchError((error) {
+      favorites[productId] = !favorites[productId];
+
+      emit(AppErrorChangeFavoritesState());
+    });
+  }
+
+  FavoritesModel favoritesModel;
+
+  void getFavorites() {
+    emit(AppLoadingGetFavoritesState());
+
+    DioHelper.getData(
+      url: FAVORITES,
+      token: token,
+    ).then((value) {
+      favoritesModel = FavoritesModel.fromJson(value.data);
+      //printFullText(value.data.toString());
+
+      emit(AppSuccessGetFavoritesState());
+    }).catchError((error) {
+      print(error.toString());
+      emit(AppErrorGetFavoritesState());
+    });
+  }
+
+  // AppLoginModel userModel;
+  //
+  // void getUserData() {
+  //   emit(ShopLoadingUserDataState());
+  //
+  //   DioHelper.getData(
+  //     url: PROFILE,
+  //     token: token,
+  //   ).then((value) {
+  //     userModel = ShopLoginModel.fromJson(value.data);
+  //     printFullText(userModel.data.name);
+  //
+  //     emit(ShopSuccessUserDataState(userModel));
+  //   }).catchError((error) {
+  //     print(error.toString());
+  //     emit(ShopErrorUserDataState());
+  //   });
+  // }
+
+  // void updateUserData({
+  //   @required String name,
+  //   @required String email,
+  //   @required String phone,
+  // }) {
+  //   emit(ShopLoadingUpdateUserState());
+  //
+  //   DioHelper.putData(
+  //     url: UPDATE_PROFILE,
+  //     token: token,
+  //     data: {
+  //       'name': name,
+  //       'email': email,
+  //       'phone': phone,
+  //     },
+  //   ).then((value) {
+  //     userModel = ShopLoginModel.fromJson(value.data);
+  //     printFullText(userModel.data.name);
+  //
+  //     emit(ShopSuccessUpdateUserState(userModel));
+  //   }).catchError((error) {
+  //     print(error.toString());
+  //     emit(ShopErrorUpdateUserState());
+  //   });
+  // }
+
+  bool isDark = false;
+
+  void changeAppMode({bool fromShared})
+  {
+    if (fromShared != null)
+    {
+      isDark = fromShared;
+      emit(AppChangeModeState());
+    } else
+    {
+      isDark = !isDark;
+      CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
+        emit(AppChangeModeState());
+      });
+    }
   }
 }

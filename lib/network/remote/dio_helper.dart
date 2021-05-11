@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 
 class DioHelper {
   static Dio dio;
@@ -22,7 +22,7 @@ class DioHelper {
     dio.options.headers = {
       'Content-Type': 'application/json',
       'lang': lang,
-      'Authorization': token ?? '',
+      'Authorization': token??'',
     };
     return await dio.get(
       url,
@@ -34,13 +34,13 @@ class DioHelper {
     @required String url,
     Map<String, dynamic> query,
     @required Map<String, dynamic> data,
-    String lang = 'ar',
+    String lang = 'en',
     String token,
   }) async {
     dio.options.headers = {
       'Content-Type': 'application/json',
       'lang': lang,
-      'Authorization': token ?? '',
+      'Authorization': token??'',
     };
 
     return dio.post(

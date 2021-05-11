@@ -6,6 +6,7 @@ import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/modules/on_boarding/on_boarding_screen.dart';
 import 'package:shop_app/network/local/cache_helper.dart';
 import 'package:shop_app/network/remote/dio_helper.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/cubit.dart';
 import 'package:shop_app/shared/states.dart';
 import 'package:shop_app/styles/themes.dart';
@@ -23,7 +24,8 @@ void main() async {
 
   bool onBoarding = CacheHelper.getData(key: 'onBoarding');
 
-  String token = CacheHelper.getData(key: 'token');
+  token = CacheHelper.getData(key: 'token');
+  print(token);
 
   if (onBoarding != null) {
     if (token != null)
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => AppCubit()
         ..getHomeData()
-        ..getCategoriesData()
+        ..getCategories()
         ..changeAppMode(
           fromShared: isDark,
         ),

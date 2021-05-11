@@ -17,18 +17,29 @@ class ProductsScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return ConditionalBuilder(
-          condition: AppCubit.get(context).homeModel != null && AppCubit.get(context).categoriesModel != null,
+          condition: AppCubit
+              .get(context)
+              .homeModel != null && AppCubit
+              .get(context)
+              .categoriesModel != null,
           builder: (context) =>
-              builderWidget(AppCubit.get(context).homeModel, context, AppCubit.get(context).categoriesModel),
-          fallback: (context) => Center(
-            child: CircularProgressIndicator(),
-          ),
+              builderWidget(AppCubit
+                  .get(context)
+                  .homeModel, context, AppCubit
+                  .get(context)
+                  .categoriesModel),
+          fallback: (context) =>
+              Center(
+                child: CircularProgressIndicator(),
+              ),
         );
       },
     );
   }
 
-  Widget builderWidget(HomeModel homeModel, context, CategoriesModel categoriesModel) => SingleChildScrollView(
+  Widget builderWidget(HomeModel homeModel, context,
+      CategoriesModel categoriesModel) =>
+      SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,15 +47,19 @@ class ProductsScreen extends StatelessWidget {
             CarouselSlider(
               items: homeModel.data.banners
                   .map(
-                    (e) => Image(
+                    (e) =>
+                    Image(
                       image: NetworkImage('${e.image}'),
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
-                  )
+              )
                   .toList(),
               options: CarouselOptions(
-                height: MediaQuery.of(context).size.height * 0.25,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.25,
                 initialPage: 0,
                 viewportFraction: 1.0,
                 enableInfiniteScroll: true,
@@ -75,14 +90,20 @@ class ProductsScreen extends StatelessWidget {
                     height: 10.0,
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.15,
                     child: ListView.separated(
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => buildCategoryItems(context, categoriesModel.data.data[index]),
-                      separatorBuilder: (context, index) => SizedBox(
-                        width: 10.0,
-                      ),
+                      itemBuilder: (context, index) =>
+                          buildCategoryItems(
+                              context, categoriesModel.data.data[index]),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(
+                            width: 10.0,
+                          ),
                       itemCount: categoriesModel.data.data.length,
                     ),
                   ),
@@ -110,7 +131,9 @@ class ProductsScreen extends StatelessWidget {
                 childAspectRatio: 1 / 1.72,
                 children: List.generate(
                   homeModel.data.products.length,
-                  (index) => buildGridProduct(homeModel.data.products[index]),
+                      (index) =>
+                      buildGridProduct(
+                        homeModel.data.products[index], context,),
                 ),
               ),
             ),
@@ -118,18 +141,28 @@ class ProductsScreen extends StatelessWidget {
         ),
       );
 
-  Widget buildCategoryItems(context, DataModel model) => Stack(
+  Widget buildCategoryItems(context, DataModel model) =>
+      Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           Image(
             image: NetworkImage(
                 model.image),
-            width: MediaQuery.of(context).size.width * 0.26,
-            height: MediaQuery.of(context).size.height * 0.15,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.26,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.15,
             fit: BoxFit.cover,
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.26,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.26,
             color: Colors.black.withOpacity(
               .8,
             ),
@@ -146,7 +179,8 @@ class ProductsScreen extends StatelessWidget {
         ],
       );
 
-  Widget buildGridProduct(ProductModel model) => Container(
+  Widget buildGridProduct(ProductModel model, context) =>
+      Container(
         color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,10 +243,15 @@ class ProductsScreen extends StatelessWidget {
                         ),
                       Spacer(),
                       IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {},
+                        onPressed: () {
+                          AppCubit.get(context).changeFavorites(model.id);
+                          print(model.id);
+                        },
                         icon: Icon(
-                          Icons.favorite_border,
+                          Icons.favorite,
+                          color: AppCubit
+                              .get(context)
+                              .favorites[model.id] ? Colors.red : Colors.grey,
                           size: 22.0,
                         ),
                       ),
